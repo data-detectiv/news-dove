@@ -12,6 +12,7 @@ doc = BeautifulSoup(response, "html.parser")
 headlines = doc.find_all("h2", {"data-testid": "card-headline"})
 timestamps = doc.find_all("span", {"data-testid":"card-metadata-lastupdated"})
 
+
 start_time = datetime.now()
 def convert_to_hours(time_str):
     """
@@ -35,9 +36,9 @@ for headline in headlines:
 
     for timestamp in timestamps:
         timestamp_in_hours = convert_to_hours(timestamp.text)
-        headline_time = (start_time + timedelta(hours=timestamp_in_hours)).strftime('%Y-%m-%d %H:%M')
-        # print(headline_time)
-    # timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        headline_time = (start_time + timedelta(hours=timestamp_in_hours)).strftime('%Y-%m-%d %H:%M:%S')
+        
+       
         for sentence in blob.sentences:
             sentiment_score = sentence.sentiment.polarity
             if sentiment_score > 0:
@@ -54,10 +55,8 @@ for headline in headlines:
                 "timestamp": headline_time})
 
 df = pd.DataFrame(data).sort_values(by='timestamp').reset_index(drop=True)
-print(df.head())
+df = df.drop_duplicates()
+df.to_csv('news_sentiment.csv', index=False)
 
 
 
-#write a function for the above
-# if __name__ == "__main__":
-#     print(data)
